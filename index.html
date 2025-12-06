@@ -1170,30 +1170,116 @@
         max-width: 90vw;
         justify-content: space-between;
         padding: 12px 24px;
-        /* Revert gap for mobile */
         gap: 0;
       }
 
       .nav-links-desktop {
         display: none;
-        /* Hidden on mobile */
       }
 
       .hamburger {
         display: flex;
-        /* Show hamburger */
       }
 
-      /* General Mobile */
-      html {
-        /* Removed scroll-snap to prevent conflict with GSAP */
-        scroll-padding-top: 100px;
-      }
-
+      /* --- NEW: CENTERED GLASS STACK MENU (Mobile Only) --- */
       .glass-sidebar {
+        /* Reset positioning for centered modal */
+        top: 50%;
+        left: 50%;
+        right: auto;
+        bottom: auto;
         width: 85vw;
         max-width: 320px;
-        right: 12px;
+        max-height: 80vh;
+
+        /* Stacked Glass Aesthetics */
+        background: linear-gradient(135deg, rgba(30, 30, 35, 0.6), rgba(20, 20, 25, 0.8));
+        backdrop-filter: blur(40px) saturate(180%);
+        -webkit-backdrop-filter: blur(40px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 32px;
+
+        /* The "Stack" Effect (Multiple Shadows/Borders) */
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.05),
+          /* Inner subtle border */
+          0 20px 50px rgba(0, 0, 0, 0.5),
+          /* Deep shadow */
+          inset 0 1px 0 rgba(255, 255, 255, 0.2),
+          /* Top highlight */
+          /* Fake second card below */
+          0 10px 0 -5px rgba(255, 255, 255, 0.05),
+          0 10px 20px -5px rgba(0, 0, 0, 0.3);
+
+        /* Initial State: Hidden (Scaled Down & Faded) */
+        transform: translate(-50%, -50%) scale(0.9);
+        opacity: 0;
+        pointer-events: none;
+
+        transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+        padding: 32px 24px;
+        overflow: hidden;
+      }
+
+      .glass-sidebar.open {
+        /* Open State: Centered & Full Scale */
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      /* Refined Pill Items for Stack Look */
+      .sidebar-nav {
+        gap: 16px;
+        align-items: stretch;
+      }
+
+      .sidebar-item {
+        justify-content: center;
+        /* Center text/icon */
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 100px;
+        /* Pill shape */
+        padding: 16px;
+        backdrop-filter: blur(10px);
+        margin-bottom: 0;
+      }
+
+      .sidebar-header {
+        justify-content: center;
+        margin-bottom: 24px;
+        border-bottom: none;
+        padding-bottom: 0;
+        position: relative;
+      }
+
+      /* Absolute close button matching the reference "floating" feel */
+      .close-btn {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        background: rgba(255, 255, 255, 0.1);
+        width: 36px;
+        height: 36px;
+      }
+
+      .brand-icon,
+      .brand-name {
+        /* Optional: Hide brand in modal if focusing purely on nav options like the image */
+        /* display: none; */
+      }
+
+      /* Hide standard dividers/footer if simpler look desired, ensuring pure nav focus */
+      .sidebar-footer {
+        display: none;
+      }
+
+      .sidebar-divider,
+      .sidebar-section-title,
+      .social-item {
+        display: none;
+        /* Simplify to match the clean "Menu" image provided */
       }
 
       .hero {
