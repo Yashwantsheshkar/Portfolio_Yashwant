@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Yashwant Sheshkar | 3D Showcase</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+
+  <style>
+    /* --- 1. CORE VARIABLES & RESET --- */
+    :root {
+      --bg: #050507;
+      --text-main: #f5f5f7;
+      --text-muted: #86868b;
+      --glass-material: rgba(20, 20, 25, 0.65);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --accent: #2997ff;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      outline: none;
+    }
+
+    html {
+      overflow-x: hidden;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      scrollbar-width: none;
+      cursor: default;
+      width: 100%;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    body::-webkit-scrollbar {
+      display: none;
+    }
+
+    body.loading {
+      height: 100vh;
+      overflow: hidden;
+      position: fixed;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+
+    /* --- VIDEO BACKGROUND --- */
+    .video-bg-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      z-index: -5;
+      overflow: hidden;
+    }
+
+    #scrub-video {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      min-width: 100%;
+      min-height: 100%;
+      width: auto;
+      height: auto;
+      transform: translate(-50%, -50%);
+      object-fit: cover;
+      opacity: 0.6;
+      filter: brightness(0.7) contrast(1.1);
+    }
+
+    /* --- AMBIENT & GRAIN --- */
+    .ambient-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      z-index: -4;
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      will-change: transform;
+    }
+
+    .blob-1 {
+      top: -10%;
+      left: -10%;
+      width: 50vw;
+      height: 50vw;
+      background: radial-gradient(circle, #0a4d9e 0%, #001e45 100%);
+      opacity: 0.4;
+    }
+
+    .blob-2 {
+      bottom: -10%;
+      right: -10%;
+      width: 60vw;
+      height: 60vw;
+      background: radial-gradient(circle, #4a1c7a 0%, #1a052e 100%);
+      opacity: 0.3;
+    }
+
+    .grain-texture {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      opacity: 0.04;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    }
+
+    .vignette {
+      position: fixed;
+      inset: 0;
+      z-index: -3;
+      pointer-events: none;
+      background: radial-gradient(ellipse at center, transparent 30%, rgba(3, 3, 5, 0.8) 100%);
+    }
+
+    /* --- PRELOADER --- */
+    .preloader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background: var(--bg);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .loader-wrap {
+      width: 200px;
+      text-align: center;
+    }
+
+    .loader-bar-bg {
+      width: 100%;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 15px;
+    }
+
+    .loader-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: #fff;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+    }
+
+    .loader-logo {
+      font-weight: 600;
+      letter-spacing: -0.5px;
+      font-size: 1.1rem;
+      color: #fff;
+    }
+
+    /* --- SHOWCASE OVERLAY --- */
+    .showcase-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #050507;
+      z-index: 10001;
+      display: flex;
+      flex-direction: column;
+      opacity: 1;
+      pointer-events: auto;
+      box-shadow: inset 0 0 150px rgba(41, 151, 255, 0.1);
+      overflow: hidden;
+    }
+
+    .showcase-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 30px 50px;
+      flex-shrink: 0;
+      z-index: 10;
+      width: 100%;
+      opacity: 0;
+      transform: translateY(-20px);
+      filter: blur(10px);
+    }
+
+    .showcase-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.5px;
+    }
+
+    .close-text-btn {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #86868b;
+      letter-spacing: 1px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: 0.3s;
+    }
+
+    .close-text-btn:hover {
+      color: #fff;
+    }
+
+    /* GRID & CARDS */
+    .showcase-grid {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      gap: 30px;
+      padding: 0 50px 50px 50px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      height: 100%;
+      align-items: center;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .showcase-grid::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* --- THE VEX CARD STYLE (FIXED INITIAL STATE) --- */
+    .vex-card {
+      position: relative;
+      flex: 0 0 280px;
+      height: 420px;
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      background: #000;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      scroll-snap-align: center;
+
+      /* PRE-ANIMATION STATE TO PREVENT GLITCH */
+      opacity: 0;
+      transform: translateY(30px);
+      filter: blur(10px);
+      pointer-events: none;
+      /* Disable interaction during animation */
+    }
+
+    .vex-card.anim-complete {
+      pointer-events: auto;
+      /* Enable interaction after animation */
+    }
+
+    .vex-card.anim-complete:hover {
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      border-color: rgba(255, 255, 255, 0.2);
+      z-index: 2;
+    }
+
+    .vex-card-bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      transition: transform 0.6s ease;
+      opacity: 0.6;
+    }
+
+    .vex-card.anim-complete:hover .vex-card-bg {
+      transform: scale(1.1);
+      opacity: 0.8;
+    }
+
+    .vex-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, #000 0%, rgba(0, 0, 0, 0.5) 50%, transparent 100%);
+    }
+
+    .vex-number {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 3.5rem;
+      font-weight: 900;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(255, 255, 255, 0.25);
+      font-family: 'Inter', sans-serif;
+      z-index: 2;
+      pointer-events: none;
+      line-height: 1;
+    }
+
+    .vex-content {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      padding: 24px;
+      z-index: 5;
+    }
+
+    .vex-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      line-height: 1.1;
+    }
+
+    .vex-subtitle {
+      font-size: 0.65rem;
+      color: #86868b;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .vex-card.anim-complete:hover .vex-subtitle {
+      color: #fff;
+    }
+
+    /* MOBILE */
+    @media (max-width: 768px) {
+      .showcase-header {
+        padding: 20px 24px;
+      }
+
+      .showcase-grid {
+        padding: 0 max(24px, calc(50vw - 140px));
+        /* Center snap */
+        gap: 20px;
+        scroll-snap-type: x mandatory;
+      }
+
+      .vex-card {
+        margin-bottom: 0;
+      }
+
+      .vex-card.anim-complete:hover {
+        transform: none !important;
+      }
+    }
+
+    /* PROJECT GALLERY CSS (Same as before) */
+    .vision-gallery-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #000;
+      z-index: 20000;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .vision-gallery-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .gallery-stage {
+      flex: 1;
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .gallery-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform-style: preserve-3d;
+      perspective: 1000px;
+    }
+
+    .gallery-media {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: 4px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+    }
+
+    .gallery-controls {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 24px;
+      align-items: center;
+      z-index: 20005;
+    }
+
+    .gallery-btn {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      transition: 0.3s;
+      cursor: pointer;
+    }
+
+    .gallery-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+      transform: scale(1.1);
+    }
+
+    .gallery-counter {
+      font-variant-numeric: tabular-nums;
+      color: #86868b;
+      font-size: 0.9rem;
+      font-weight: 500;
+      letter-spacing: 2px;
+    }
+
+    .gallery-close-absolute {
+      position: absolute;
+      top: 30px;
+      right: 30px;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(60, 60, 60, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 20005;
+      backdrop-filter: blur(20px);
+      transition: 0.3s;
+    }
+
+    .gallery-close-absolute:hover {
+      background: rgba(80, 80, 80, 0.8);
+      transform: scale(1.05);
+    }
+
+    .gallery-thumbnails {
+      display: flex;
+      gap: 12px;
+      height: 80px;
+      padding: 10px 20px;
+      overflow-x: auto;
+      z-index: 20002;
+      position: absolute;
+      bottom: 120px;
+      left: 50%;
+      transform: translateX(-50%);
+      max-width: 90%;
+      scrollbar-width: none;
+    }
+
+    .gallery-thumb {
+      width: 56px;
+      height: 56px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      flex-shrink: 0;
+      cursor: pointer;
+      opacity: 0.5;
+      transition: 0.3s;
+    }
+
+    .gallery-thumb.active {
+      border-color: #fff;
+      opacity: 1;
+      transform: scale(1.1);
+    }
+
+    .gallery-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .info-toggle-btn {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      background: rgba(255, 255, 255, 0.1);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      backdrop-filter: blur(10px);
+      cursor: pointer;
+      z-index: 110;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: 0.2s;
+    }
+
+    .info-overlay {
+      position: absolute;
+      bottom: 80px;
+      left: 20px;
+      right: 20px;
+      background: rgba(20, 20, 25, 0.85);
+      backdrop-filter: blur(20px);
+      padding: 24px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      z-index: 105;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: 0.3s;
+      pointer-events: none;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .info-overlay.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .info-title {
+      color: #fff;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .info-desc {
+      color: #ccc;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin-bottom: 16px;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+
+    .gallery-artstation-btn {
+      margin-left: 20px;
+      padding: 10px 20px;
+      border-radius: 100px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      font-weight: 500;
+      font-size: 0.85rem;
+      backdrop-filter: blur(10px);
+      transition: 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .gallery-artstation-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+
+<body class="loading">
+
+  <div class="video-bg-container">
+    <video id="scrub-video" muted playsinline preload="auto" loop autoplay>
+      <source src="images/shot2.mov" type="video/quicktime">
+      <source src="images/shot2.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="ambient-bg">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+  <div class="grain-texture"></div>
+  <div class="vignette"></div>
+
+  <div id="showcasePage" class="showcase-overlay active">
+    <div class="showcase-header">
+      <div class="showcase-title">3D / VFX Projects</div>
+      <a href="#" onclick="window.history.back(); return false;" class="close-text-btn">CLOSE</a>
+    </div>
+
+    <div class="showcase-grid" id="showcaseGrid">
+    </div>
+  </div>
+
+  <div class="vision-gallery-overlay" id="visionGallery">
+    <div class="gallery-close-absolute" onclick="closeGallery()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+        width="24" height="24">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </div>
+
+    <div class="gallery-stage" id="galleryStage">
+      <div class="gallery-container" id="galleryContainer"></div>
+
+      <div class="gallery-controls">
+        <button class="gallery-btn" onclick="changeSlide(-1)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </button>
+        <div class="gallery-counter" id="galleryCounter">1 / 5</div>
+        <button class="gallery-btn" onclick="changeSlide(1)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </button>
+        <a id="artstationLink" href="#" target="_blank" class="gallery-artstation-btn">
+          <span>View on ArtStation</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <line x1="10" y1="14" x2="21" y2="3"></line>
+          </svg>
+        </a>
+      </div>
+
+      <div class="info-toggle-btn" onclick="toggleInfoOverlay()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+      </div>
+
+      <div class="info-overlay" id="infoOverlay">
+        <h3 class="info-title" id="infoTitle">Project Title</h3>
+        <p class="info-desc" id="infoDesc">Project description goes here...</p>
+        <div class="info-tools" id="infoTools"></div>
+      </div>
+    </div>
+
+    <div class="gallery-thumbnails" id="galleryThumbnails"></div>
+  </div>
+
+  <script>
+    gsap.config({ nullTargetWarn: false });
+    gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+
+    // 1. BLOBS
+    const blob1 = document.querySelector('.blob-1');
+    const blob2 = document.querySelector('.blob-2');
+    if (blob1 && blob2) {
+      gsap.to(blob1, { x: "random(-100, 100)", y: "random(-50, 50)", scale: "random(0.9, 1.1)", duration: 10, repeat: -1, yoyo: true, ease: "sine.inOut" });
+      gsap.to(blob2, { x: "random(-50, 50)", y: "random(-100, 50)", scale: "random(0.9, 1.1)", duration: 12, repeat: -1, yoyo: true, ease: "sine.inOut" });
+      window.addEventListener('mousemove', (e) => {
+        const x = e.clientX; const y = e.clientY;
+        const xPercent = x / window.innerWidth - 0.5; const yPercent = y / window.innerHeight - 0.5;
+        gsap.to(blob1, { x: xPercent * -60, y: yPercent * -60, duration: 1.5, ease: "power2.out" });
+        gsap.to(blob2, { x: xPercent * -40, y: yPercent * -40, duration: 1.5, ease: "power2.out" });
+      });
+    }
+
+    // 2. LOADER AND ANIMATION FIX
+    function startLoader() {
+      const bar = document.querySelector('.loader-bar-fill');
+      if (!bar) {
+        // Fallback if loader html structure isn't perfect
+        setTimeout(revealSite, 500);
+        return;
+      }
+      let width = 0;
+      const interval = setInterval(() => {
+        width += Math.random() * 5 + 2;
+        if (width >= 100) {
+          width = 100;
+          clearInterval(interval);
+          setTimeout(revealSite, 10);
+        }
+        bar.style.width = width + '%';
+      }, 30);
+    }
+
+    function revealSite() {
+      const tl = gsap.timeline();
+
+      tl.to(".preloader", {
+        yPercent: -100,
+        duration: 0.8,
+        ease: "power3.inOut",
+        onComplete: () => {
+          document.querySelector('.preloader').style.display = 'none';
+          document.body.classList.remove("loading");
+        }
+      })
+        .to(".showcase-overlay", { opacity: 1, duration: 0.1 }, "-=0.8")
+        .to(".showcase-header", {
+          y: 0, opacity: 1, filter: "blur(0px)", duration: 0.8, ease: "power2.out"
+        }, "-=0.7");
+
+      // Staggered card reveal with anim-complete callback
+      // Staggered card reveal with individual callbacks for immediate hover availability
+      const cards = document.querySelectorAll('.vex-card');
+      if (cards.length > 0) {
+        // We use a loop to ensure onComplete fires for EACH card individually
+        cards.forEach((card, i) => {
+          gsap.to(card, {
+            y: 0, opacity: 1, filter: "blur(0px)", duration: 1.5, ease: "power3.inOut",
+            delay: i * 0.15, // Manual stagger relative to the start
+            onComplete: () => {
+              card.classList.add('anim-complete');
+            }
+          });
+        });
+      }
+    }
+    startLoader();
+
+    // --- PROJECT SHOWCASE LOGIC ---
+    let projectsData = [];
+    const showcaseGrid = document.getElementById('showcaseGrid');
+
+    fetch('projects.json')
+      .then(response => response.json())
+      .then(data => {
+        projectsData = data;
+        renderShowcase();
+      })
+      .catch(err => console.error('Error loading projects:', err));
+
+    function renderShowcase() {
+      if (!showcaseGrid) return;
+      showcaseGrid.innerHTML = '';
+
+      projectsData.forEach((project, index) => {
+        const displayNum = (index + 1).toString().padStart(2, '0');
+        const poster = project.images.length > 0 ? project.images[0] : '';
+
+        const card = document.createElement('div');
+        card.className = 'vex-card'; // CSS handles initial opacity: 0
+        card.onclick = () => openProjectGallery(index);
+
+        card.innerHTML = `
+          <div class="vex-card-bg" style="background-image: url('${poster}')"></div>
+          <div class="vex-number">${displayNum}</div>
+          <div class="vex-content">
+            <h3 class="vex-title">${project.title}</h3>
+            <p class="vex-subtitle">3D / VISUAL FX</p>
+          </div>
+        `;
+
+        showcaseGrid.appendChild(card);
+      });
+    }
+
+    // --- 11. PROJECT GALLERY INTEGRATION ---
+    const galleryOverlay = document.getElementById('visionGallery');
+    const galleryContainer = document.getElementById('galleryContainer');
+    const galleryCounter = document.getElementById('galleryCounter');
+    const thumbsContainer = document.getElementById('galleryThumbnails');
+    const infoOverlay = document.getElementById('infoOverlay');
+    const infoTitle = document.getElementById('infoTitle');
+    const infoDesc = document.getElementById('infoDesc');
+    const infoTools = document.getElementById('infoTools');
+
+    let mediaAssets = [];
+    let activeMedia = [];
+    let currentSlide = 0;
+
+    function openProjectGallery(index) {
+      currentProjectIndex = index;
+      const project = projectsData[index];
+
+      infoTitle.innerText = project.title;
+      infoDesc.innerText = project.description || "No description available.";
+      const tools = ["Blender", "ZBrush", "Substance Painter"];
+      infoTools.innerHTML = tools.map(t => `<span class="tool-badge">${t}</span>`).join('');
+
+      const artstationLink = document.getElementById('artstationLink');
+      if (artstationLink && project.artstationUrl) {
+        artstationLink.href = project.artstationUrl;
+        artstationLink.style.display = 'flex';
+      } else if (artstationLink) {
+        artstationLink.style.display = 'none';
+      }
+
+      mediaAssets = [];
+      if (project.videos) {
+        project.videos.forEach(vid => {
+          mediaAssets.push({ type: 'video', src: vid, thumb: project.images[0] });
+        });
+      }
+      if (project.images) {
+        project.images.forEach(img => {
+          mediaAssets.push({ type: 'image', src: img, thumb: img });
+        });
+      }
+
+      activeMedia = [...mediaAssets];
+      currentSlide = 0;
+
+      galleryOverlay.classList.add('active');
+      updateGalleryContent(false);
+      renderThumbnails();
+
+      gsap.fromTo(galleryContainer, { scale: 0.8, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "power3.out" });
+      document.addEventListener('keydown', handleGalleryKeys);
+    }
+
+    function closeGallery() {
+      const existingVideo = galleryContainer.querySelector('video');
+      if (existingVideo) existingVideo.pause();
+
+      gsap.to(galleryContainer, { scale: 0.9, opacity: 0, duration: 0.3 });
+      setTimeout(() => {
+        galleryOverlay.classList.remove('active');
+        document.removeEventListener('keydown', handleGalleryKeys);
+        galleryContainer.innerHTML = '';
+      }, 300);
+    }
+
+    function updateGalleryContent(animate) {
+      const item = activeMedia[currentSlide];
+      galleryCounter.innerText = `${currentSlide + 1} / ${activeMedia.length}`;
+
+      const thumbs = document.querySelectorAll('.gallery-thumb');
+      thumbs.forEach((t, i) => {
+        if (i === currentSlide) {
+          t.classList.add('active');
+          t.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        } else t.classList.remove('active');
+      });
+
+      let newEl;
+      if (item.type === 'video') {
+        newEl = document.createElement('video');
+        newEl.src = item.src;
+        newEl.className = 'gallery-media';
+        newEl.autoplay = true;
+        newEl.muted = false;
+        newEl.loop = true;
+        newEl.playsInline = true;
+        newEl.controls = true;
+      } else {
+        newEl = document.createElement('img');
+        newEl.src = item.src;
+        newEl.className = 'gallery-media';
+      }
+
+      galleryContainer.innerHTML = '';
+      galleryContainer.appendChild(newEl);
+      if (animate) {
+        gsap.fromTo(newEl, { opacity: 0.5, scale: 0.98 }, { opacity: 1, scale: 1, duration: 0.3 });
+      }
+    }
+
+    function renderThumbnails() {
+      thumbsContainer.innerHTML = '';
+      activeMedia.forEach((item, index) => {
+        const thumb = document.createElement('div');
+        thumb.className = `gallery-thumb ${index === currentSlide ? 'active' : ''}`;
+        thumb.onclick = () => {
+          currentSlide = index;
+          updateGalleryContent(true);
+        };
+        const img = document.createElement('img');
+        img.src = item.thumb || item.src;
+        thumb.appendChild(img);
+        thumbsContainer.appendChild(thumb);
+      });
+    }
+
+    function changeSlide(direction) {
+      if (activeMedia.length === 0) return;
+      currentSlide += direction;
+      if (currentSlide < 0) currentSlide = activeMedia.length - 1;
+      if (currentSlide >= activeMedia.length) currentSlide = 0;
+      updateGalleryContent(true);
+    }
+
+    function handleGalleryKeys(e) {
+      if (e.key === "Escape") closeGallery();
+      if (e.key === "ArrowRight") changeSlide(1);
+      if (e.key === "ArrowLeft") changeSlide(-1);
+    }
+
+    function toggleInfoOverlay() {
+      infoOverlay.classList.toggle('active');
+    }
+  </script>
+</body>
+
+</html>

@@ -10,6 +10,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+  <link rel="prefetch" href="showcase.html">
 
   <style>
     /* --- 1. CORE VARIABLES & RESET --- */
@@ -50,7 +51,6 @@
       cursor: default;
       width: 100%;
       min-height: 100vh;
-      /* FIXED: Removed 'position: fixed' to allow native scrolling */
       position: relative;
     }
 
@@ -101,11 +101,10 @@
       transform: translate(-50%, -50%);
       object-fit: cover;
       opacity: 0.6;
-      /* Adjust visibility of video vs background color */
       filter: brightness(0.7) contrast(1.1);
     }
 
-    /* --- 2. BACKGROUND BLOBS (Overlaying video slightly) --- */
+    /* --- 2. BACKGROUND BLOBS --- */
     .ambient-bg {
       position: fixed;
       top: 0;
@@ -113,10 +112,8 @@
       width: 100%;
       height: 100vh;
       z-index: -4;
-      /* Above video */
       pointer-events: none;
       mix-blend-mode: screen;
-      /* Blends blobs with video */
     }
 
     .blob {
@@ -1181,9 +1178,7 @@
         display: flex;
       }
 
-      /* --- NEW: CENTERED GLASS STACK MENU (Mobile Only) --- */
       .glass-sidebar {
-        /* Reset positioning for centered modal */
         top: 50%;
         left: 50%;
         right: auto;
@@ -1191,44 +1186,31 @@
         width: 85vw;
         max-width: 320px;
         max-height: 80vh;
-
-        /* Stacked Glass Aesthetics */
         background: linear-gradient(135deg, rgba(30, 30, 35, 0.6), rgba(20, 20, 25, 0.8));
         backdrop-filter: blur(40px) saturate(180%);
         -webkit-backdrop-filter: blur(40px) saturate(180%);
         border: 1px solid rgba(255, 255, 255, 0.2);
         border-radius: 32px;
-
-        /* The "Stack" Effect (Multiple Shadows/Borders) */
         box-shadow:
           0 0 0 1px rgba(255, 255, 255, 0.05),
-          /* Inner subtle border */
           0 20px 50px rgba(0, 0, 0, 0.5),
-          /* Deep shadow */
           inset 0 1px 0 rgba(255, 255, 255, 0.2),
-          /* Top highlight */
-          /* Fake second card below */
           0 10px 0 -5px rgba(255, 255, 255, 0.05),
           0 10px 20px -5px rgba(0, 0, 0, 0.3);
-
-        /* Initial State: Hidden (Scaled Down & Faded) */
         transform: translate(-50%, -50%) scale(0.9);
         opacity: 0;
         pointer-events: none;
-
         transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
         padding: 32px 24px;
         overflow: hidden;
       }
 
       .glass-sidebar.open {
-        /* Open State: Centered & Full Scale */
         transform: translate(-50%, -50%) scale(1);
         opacity: 1;
         pointer-events: auto;
       }
 
-      /* Refined Pill Items for Stack Look */
       .sidebar-nav {
         gap: 16px;
         align-items: stretch;
@@ -1236,11 +1218,9 @@
 
       .sidebar-item {
         justify-content: center;
-        /* Center text/icon */
         background: rgba(255, 255, 255, 0.03);
         border: 1px solid rgba(255, 255, 255, 0.05);
         border-radius: 100px;
-        /* Pill shape */
         padding: 16px;
         backdrop-filter: blur(10px);
         margin-bottom: 0;
@@ -1254,7 +1234,6 @@
         position: relative;
       }
 
-      /* Absolute close button matching the reference "floating" feel */
       .close-btn {
         position: absolute;
         top: -10px;
@@ -1264,13 +1243,6 @@
         height: 36px;
       }
 
-      .brand-icon,
-      .brand-name {
-        /* Optional: Hide brand in modal if focusing purely on nav options like the image */
-        /* display: none; */
-      }
-
-      /* Hide standard dividers/footer if simpler look desired, ensuring pure nav focus */
       .sidebar-footer {
         display: none;
       }
@@ -1279,7 +1251,6 @@
       .sidebar-section-title,
       .social-item {
         display: none;
-        /* Simplify to match the clean "Menu" image provided */
       }
 
       .hero {
@@ -1359,9 +1330,7 @@
       pointer-events: auto;
     }
 
-    /* --- TAB BAR (RELOCATED TO BOTTOM OF IMAGE) --- */
     .gallery-tabs {
-      /* Position moved to flow normally in flex container */
       position: relative;
       margin-top: 24px;
       display: flex;
@@ -1409,16 +1378,13 @@
       width: 90%;
       max-width: 1200px;
       height: 60vh;
-      /* Slightly reduced height to fit tabs */
       display: flex;
       align-items: center;
       justify-content: center;
       perspective: 1000px;
-      /* Ensure no click-through */
       pointer-events: none;
     }
 
-    /* 2. FRAME SIZE FIX: WRAP CONTENT EXACTLY */
     .gallery-image-container {
       position: relative;
       border-radius: 32px;
@@ -1428,17 +1394,14 @@
       opacity: 0;
       border: 1px solid rgba(255, 255, 255, 0.15);
       background: #000;
-      /* Remove fixed width/height 100% to let it hug content */
       width: auto;
       height: auto;
       max-width: 100%;
       max-height: 100%;
       display: inline-flex;
-      /* Hug content */
       justify-content: center;
       align-items: center;
       pointer-events: auto;
-      /* Re-enable pointer events for controls */
     }
 
     .gallery-media {
@@ -1446,11 +1409,9 @@
       max-height: 60vh;
       display: block;
       object-fit: contain;
-      /* Ensure border radius clips video */
       border-radius: 32px;
     }
 
-    /* CUSTOM VIDEO PLAYER STYLES */
     .custom-video-ui {
       position: absolute;
       bottom: 0;
@@ -1498,7 +1459,6 @@
     .progress-container {
       flex: 1;
       height: 20px;
-      /* larger hit area */
       display: flex;
       align-items: center;
       cursor: pointer;
@@ -1548,7 +1508,6 @@
       text-align: right;
     }
 
-    /* Hide default video controls */
     video::-webkit-media-controls {
       display: none !important;
     }
@@ -1672,7 +1631,6 @@
       }
     }
 
-    /* --- GALLERY THUMBNAILS & SWIPE --- */
     .gallery-thumbnails {
       display: flex;
       gap: 12px;
@@ -1717,7 +1675,6 @@
       object-fit: cover;
     }
 
-    /* Video Indicator on Thumbnail */
     .video-indicator {
       position: absolute;
       top: 50%;
@@ -1740,7 +1697,6 @@
       margin-left: 1px;
     }
 
-    /* --- GALLERY LOADER --- */
     .gallery-loader {
       position: absolute;
       top: 50%;
@@ -1780,6 +1736,288 @@
       to {
         transform: rotate(360deg);
       }
+    }
+
+    /* --- 15. PROJECT SHOWCASE (CINEMATIC REVAMP) --- */
+    .showcase-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #050507;
+      /* Dark BG */
+      z-index: 10001;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+      box-shadow: inset 0 0 150px rgba(41, 151, 255, 0.1);
+      /* Blue glow */
+      overflow: hidden;
+    }
+
+    .showcase-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .showcase-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 30px 50px;
+      flex-shrink: 0;
+      z-index: 10;
+      width: 100%;
+    }
+
+    .showcase-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.5px;
+    }
+
+    .close-text-btn {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #86868b;
+      letter-spacing: 1px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: 0.3s;
+    }
+
+    .close-text-btn:hover {
+      color: #fff;
+    }
+
+    /* Layout: Row on Desktop */
+    .showcase-grid {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      gap: 30px;
+      padding: 0 50px 50px 50px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      height: 100%;
+      align-items: center;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .showcase-grid::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* --- THE VEX CARD STYLE --- */
+    .vex-card {
+      position: relative;
+      flex: 0 0 280px;
+      /* Fixed width */
+      height: 420px;
+      /* Fixed height */
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      background: #000;
+      transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s ease;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+
+      /* New for Mobile Snap */
+      scroll-snap-align: center;
+    }
+
+    .vex-card:hover {
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      border-color: rgba(255, 255, 255, 0.2);
+      z-index: 2;
+    }
+
+    /* BG Image */
+    .vex-card-bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      transition: transform 0.6s ease;
+      opacity: 0.6;
+    }
+
+    .vex-card:hover .vex-card-bg {
+      transform: scale(1.1);
+      opacity: 0.8;
+    }
+
+    /* Overlay Gradient */
+    .vex-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, #000 0%, rgba(0, 0, 0, 0.5) 50%, transparent 100%);
+    }
+
+    /* Large Stroke Number */
+    .vex-number {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 3.5rem;
+      font-weight: 900;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(255, 255, 255, 0.25);
+      font-family: 'Inter', sans-serif;
+      z-index: 2;
+      pointer-events: none;
+      line-height: 1;
+    }
+
+    /* Content */
+    .vex-content {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      padding: 24px;
+      z-index: 5;
+    }
+
+    .vex-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      line-height: 1.1;
+    }
+
+    .vex-subtitle {
+      font-size: 0.65rem;
+      color: #86868b;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .vex-card:hover .vex-subtitle {
+      color: #fff;
+    }
+
+    /* --- MOBILE HORIZONTAL SCROLL FIX --- */
+    @media (max-width: 768px) {
+      .showcase-header {
+        padding: 20px 24px;
+      }
+
+      .showcase-grid {
+        flex-direction: row;
+        /* Keep Horizontal */
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding: 0 max(24px, calc(50vw - 140px));
+        /* Smart padding to center first/last card */
+        align-items: center;
+        height: 100%;
+        scroll-snap-type: x mandatory;
+        /* Force Snap */
+        gap: 20px;
+      }
+
+      .vex-card {
+        flex: 0 0 280px;
+        /* Consistent Width */
+        height: 440px;
+        scroll-snap-align: center;
+        /* Snap to Center */
+        margin-bottom: 0;
+        transform: none !important;
+        /* Disable hover lift on mobile */
+      }
+    }
+
+    /* --- 16. INFO OVERLAY IN GALLERY --- */
+    .info-overlay {
+      position: absolute;
+      bottom: 80px;
+      left: 20px;
+      right: 20px;
+      background: rgba(20, 20, 25, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 24px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      z-index: 105;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+      pointer-events: none;
+      max-width: 500px;
+    }
+
+    .info-overlay.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .info-title {
+      color: #fff;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .info-desc {
+      color: #ccc;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin-bottom: 16px;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+
+    .info-tools {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .tool-badge {
+      font-size: 0.75rem;
+      color: #fff;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 4px 10px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .info-toggle-btn {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      background: rgba(255, 255, 255, 0.1);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      backdrop-filter: blur(10px);
+      cursor: pointer;
+      z-index: 110;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: 0.2s;
+    }
+
+    .info-toggle-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
     }
   </style>
 </head>
@@ -1985,7 +2223,7 @@
         </div>
       </div>
 
-      <div class="tilt-wrap reveal" onclick="openGallery()" style="cursor: pointer;">
+      <div class="tilt-wrap reveal" onclick="window.location.href='showcase.html'" style="cursor: pointer;">
         <div class="card">
           <div class="card-glare"></div>
           <div class="card-bg-img"
@@ -1994,7 +2232,7 @@
           <div class="card-content">
             <span class="tag">Blender • Cycles</span>
             <h3>Neon Architect</h3>
-            <p class="desc">High-fidelity 3D environment art. Click to view <strong>Photos & Videos</strong>.</p>
+            <p class="desc">High-fidelity 3D environment art. Click to view <strong>Showcase</strong>.</p>
           </div>
         </div>
       </div>
@@ -2092,37 +2330,52 @@
     </div>
 
     <div class="gallery-controls">
-      <button class="gallery-btn" onclick="changeSlide(-1)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="15 18 9 12 15 6"></polyline>
-        </svg>
-      </button>
-
-      <div class="gallery-counter" id="galleryCounter">1 / 4</div>
-
-      <button class="gallery-btn" onclick="changeSlide(1)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="9 18 15 12 9 6"></polyline>
-        </svg>
-      </button>
-
-      <a href="#" target="_blank" class="gallery-artstation-btn">
-        <span>View on ArtStation</span>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-          <polyline points="15 3 21 3 21 9"></polyline>
-          <line x1="10" y1="14" x2="21" y2="3"></line>
-        </svg>
-      </a>
+      <div class="gallery-counter" id="galleryCounter">1 / 6</div>
     </div>
 
-    <div class="gallery-thumbnails" id="galleryThumbnails">
+    <div id="infoOverlay" class="info-overlay">
+      <h3 class="info-title" id="infoTitle">Project Title</h3>
+      <p class="info-desc" id="infoDesc">Project description goes here...</p>
+      <div class="info-tools" id="infoTools">
+      </div>
     </div>
 
-    <div class="gallery-loader" id="galleryLoader">
-      <div class="spinner"></div>
-      <div class="loading-text">Loading Experience</div>
-    </div>
+    <button class="info-toggle-btn" id="infoToggleBtn" onclick="toggleInfoOverlay()">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="16" x2="12" y2="12"></line>
+        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+      </svg>
+    </button>
+    <button class="gallery-btn" onclick="changeSlide(-1)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+    </button>
+
+    <button class="gallery-btn" onclick="changeSlide(1)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="9 18 15 12 9 6"></polyline>
+      </svg>
+    </button>
+
+    <a href="#" target="_blank" class="gallery-artstation-btn">
+      <span>View on ArtStation</span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+        <polyline points="15 3 21 3 21 9"></polyline>
+        <line x1="10" y1="14" x2="21" y2="3"></line>
+      </svg>
+    </a>
+  </div>
+
+  <div class="gallery-thumbnails" id="galleryThumbnails">
+  </div>
+
+  <div class="gallery-loader" id="galleryLoader">
+    <div class="spinner"></div>
+    <div class="loading-text">Loading Experience</div>
+  </div>
   </div>
 
   <template id="video-controls-template">
@@ -2150,7 +2403,10 @@
     </div>
   </template>
 
+
+
   <script>
+
     gsap.config({ nullTargetWarn: false });
     if (history.scrollRestoration) history.scrollRestoration = 'manual';
     window.scrollTo(0, 0);
@@ -2468,7 +2724,9 @@
       if (category === 'all') {
         activeMedia = [...mediaAssets];
       } else {
-        activeMedia = mediaAssets.filter(item => item.type === category);
+        activeMedia = mediaAssets.filter(item =>
+          item.type === category || (category === 'video' && item.type === 'iframe')
+        );
       }
 
       if (activeMedia.length === 0) {
@@ -2602,11 +2860,16 @@
         newEl.src = item.src;
         newEl.className = 'gallery-media';
         newEl.autoplay = true;
-        newEl.muted = false; // Start unmuted or muted depending on preference. Muted is safer for autoplay.
+        newEl.muted = false;
         newEl.loop = true;
         newEl.playsInline = true;
-        // Wait for metadata to load controls
         newEl.addEventListener('loadedmetadata', () => setupVideoPlayer(newEl));
+      } else if (item.type === 'iframe') {
+        newEl = document.createElement('iframe');
+        newEl.src = item.src;
+        newEl.className = 'gallery-media';
+        newEl.style.border = 'none';
+        newEl.allow = "autoplay; fullscreen";
       } else {
         newEl = document.createElement('img');
         newEl.src = item.src;
@@ -2685,6 +2948,56 @@
     function handleSwipe() {
       if (touchEndX < touchStartX - 50) changeSlide(1);
       if (touchEndX > touchStartX + 50) changeSlide(-1);
+    }
+    // --- 10. PROJECT SHOWCASE LOGIC REMOVED (Moved to showcase.html) ---
+    // Legacy code removed to prevent conflicts.
+
+
+
+    // --- 11. PROJECT GALLERY INTEGRATION ---
+    const infoOverlay = document.getElementById('infoOverlay');
+    const infoTitle = document.getElementById('infoTitle');
+    const infoDesc = document.getElementById('infoDesc');
+    const infoTools = document.getElementById('infoTools');
+    let currentProjectIndex = 0;
+
+    function openProjectGallery(index) {
+      currentProjectIndex = index;
+      const project = projectsData[index];
+
+      // Update Info Overlay
+      infoTitle.innerText = project.title;
+      infoDesc.innerText = project.description || "No description available.";
+
+      const tools = ["Blender", "ZBrush", "Substance Painter"];
+      infoTools.innerHTML = tools.map(t => `<span class="tool-badge">${t}</span>`).join('');
+
+      // Populate Media Assets
+      mediaAssets.length = 0; // Clear existing
+
+      // Add Videos (as iframes for ArtStation embeds)
+      if (project.videos) {
+        project.videos.forEach(vid => {
+          if (vid.includes('embed.html')) {
+            mediaAssets.push({ type: 'iframe', src: vid, thumb: project.images[0] });
+          } else {
+            mediaAssets.push({ type: 'video', src: vid, thumb: project.images[0] });
+          }
+        });
+      }
+
+      // Add Images
+      if (project.images) {
+        project.images.forEach(img => {
+          mediaAssets.push({ type: 'image', src: img, thumb: img });
+        });
+      }
+
+      openGallery();
+    }
+
+    function toggleInfoOverlay() {
+      infoOverlay.classList.toggle('active');
     }
   </script>
 </body>
